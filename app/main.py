@@ -1,10 +1,15 @@
-from typing import Annotated, Optional
+from typing import Annotated, Optional, TypedDict
 from datetime import datetime
-from zoneinfo import ZoneInfo
 
-from fastapi import Body, FastAPI
+from fastapi import Body, FastAPI, Response 
 
-tasks = {
+class Task(TypedDict):
+    id: int
+    title: str
+    completed: bool
+    due: datetime
+
+tasks : dict[int, Task] = {
     0: {
         "id": 0,
         "title": "buy milk",
@@ -84,3 +89,23 @@ def create_task(
         "completed": False,
         "due": due
     }
+
+@app.put("/tasks/{id}")
+def update_task(
+    id: int,
+    response: Response,
+    title: Annotated[Optional[str] , Body()] = None,
+    due: Annotated[Optional[datetime], Body()] = None,
+    completed: Annotated[Optional[bool], Body()] = None,
+):
+    global tasks
+    task = tasks.get(id)
+    if task is None:
+        response.status_code = 400
+        return
+    if title is not None:
+        task["title"] = title
+    if due is not None:
+        task["due"] = due
+    if completed is not None:
+        task["completed"] = completed
