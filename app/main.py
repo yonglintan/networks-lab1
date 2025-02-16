@@ -57,13 +57,13 @@ def read_root():
     return {"Hello": "World!"}
 
 @app.get("/tasks")
-def get_tasks(sortBy: Optional[str] = None, limit: Optional[int] = None):
+def get_tasks(sortBy: Optional[str] = None, count: Optional[int] = None):
     global tasks
     res = list(tasks.values())
     if sortBy is not None:
         res = sorted(res, key=lambda t: t[sortBy])
-    if limit is not None:
-        res = res[0:limit]
+    if count is not None:
+        res = res[0:count]
     return res
 
 @app.get("/tasks/{id}")
