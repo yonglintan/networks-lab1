@@ -1,8 +1,7 @@
 from typing import Optional, Union
-from copy import deepcopy
+from datetime import datetime
 
 from fastapi import Depends, FastAPI
-from datetime import datetime
 
 tasks = {
     0: {
@@ -60,11 +59,9 @@ def read_root():
 def get_tasks(sortBy: Optional[str] = None, limit: Optional[int] = None):
     global tasks
     res = list(tasks.values())
-    print("limit:", limit)
     if sortBy is not None:
         res = sorted(res, key=lambda t: t[sortBy])
     if limit is not None:
-        print("limit:", limit)
         res = res[0:limit]
     return res
 
