@@ -2,7 +2,6 @@ from typing import Annotated, Any, Callable, Optional, TypedDict
 from datetime import datetime
 import operator
 
-from pydantic import TypeAdapter
 from fastapi import Body, Depends, FastAPI, HTTPException, Query
 
 class Task(TypedDict):
@@ -60,7 +59,6 @@ operator_map = {
     '': operator.eq
 }
 
-dtadapter = TypeAdapter(datetime)
 
 id_incr = max(tasks.keys())
 
@@ -103,7 +101,7 @@ def parse_filter_params(
             if op_func is None:
                 raise HTTPException(status_code=400, detail=f"Invalid operator in filter: {filt}")
             try:
-                value = dtadapter.validate_python(filt[digits_i:]).astimezone()
+                value = datetime.strptime(filt[digits_i:], "%Y-%m-%d").astimezone()
                 filters.append(("due", op_func, value))
             except:
                 raise HTTPException(status_code=400, detail=f"Invalid value for filter: {filt}")
