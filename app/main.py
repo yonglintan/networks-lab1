@@ -66,7 +66,8 @@ id_incr = max(tasks.keys())
 
 def get_unique_id():
     global id_incr
-    return id_incr+1
+    id_incr+=1
+    return id_incr
 
 
 def get_first_digit_i(s: str) -> int:
