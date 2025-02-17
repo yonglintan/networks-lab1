@@ -14,7 +14,7 @@ tasks : dict[int, Task] = {
     0: {
         "id": 0,
         "title": "buy milk",
-        "completed": False,
+        "completed": True,
         "due": datetime(2024, 5, 17).astimezone() 
     },
     1: {
@@ -71,7 +71,6 @@ def get_unique_id():
 def get_first_digit_i(s: str) -> int:
     found = 0
     for i in range(len(s)):
-        print(s[i])
         if s[i].isdigit():
             found = i
             break
@@ -88,23 +87,23 @@ def parse_filter_params(
             digits_i = get_first_digit_i(filt)
             op_func = operator_map.get(filt[:digits_i])
             if op_func is None:
-                raise HTTPException(status_code=400, detail=f"Invalid operator in filter: {filt}")
+                raise HTTPException(status_code=400, detail=f"Invalid operator in id filter: {filt}")
             try:
                 value = int(filt[digits_i:])
                 filters.append(("id", op_func, value))
             except:
-                raise HTTPException(status_code=400, detail=f"Invalid value for filter: {filt}")
+                raise HTTPException(status_code=400, detail=f"Invalid value for id filter: {filt}")
     if due is not None:
         for filt in due:
             digits_i = get_first_digit_i(filt)
             op_func = operator_map.get(filt[:digits_i])
             if op_func is None:
-                raise HTTPException(status_code=400, detail=f"Invalid operator in filter: {filt}")
+                raise HTTPException(status_code=400, detail=f"Invalid operator in due date filter: {filt}")
             try:
                 value = datetime.strptime(filt[digits_i:], "%Y-%m-%d").astimezone()
                 filters.append(("due", op_func, value))
             except:
-                raise HTTPException(status_code=400, detail=f"Invalid value for filter: {filt}")
+                raise HTTPException(status_code=400, detail=f"Invalid value for due date filter: {filt}")
     if completed is not None:
         filters.append(("completed", operator.eq, completed))
 
