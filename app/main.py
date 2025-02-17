@@ -65,15 +65,20 @@ def read_root():
 def get_tasks(sortBy: Optional[str] = None, count: Optional[int] = None):
     global tasks
     res = list(tasks.values())
-    if sortBy is not None:
-        res = sorted(res, key=lambda t: t[sortBy])
-    if count is not None:
-        res = res[0:count]
+    try:
+        if sortBy is not None:
+            res = sorted(res, key=lambda t: t[sortBy])
+        if count is not None:
+            res = res[0:count]
+    except Exception as e:
+        raise HTTPException(status_code=400)
     return res
 
 @app.get("/tasks/{id}")
 def get_task(id: int):
     global tasks
+    if not id in tasks:
+        raise HTTPException(status_code=400)
     return tasks[id]
 
 @app.post("/tasks")
