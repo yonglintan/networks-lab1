@@ -1,7 +1,7 @@
 from typing import Annotated, Optional, TypedDict
 from datetime import datetime
 
-from fastapi import Body, FastAPI, Response 
+from fastapi import Body, FastAPI, HTTPException
 
 class Task(TypedDict):
     id: int
@@ -93,7 +93,6 @@ def create_task(
 @app.put("/tasks/{id}")
 def update_task(
     id: int,
-    response: Response,
     title: Annotated[Optional[str] , Body()] = None,
     due: Annotated[Optional[datetime], Body()] = None,
     completed: Annotated[Optional[bool], Body()] = None,
@@ -101,8 +100,7 @@ def update_task(
     global tasks
     task = tasks.get(id)
     if task is None:
-        response.status_code = 400
-        return
+        raise HTTPException(status_code=400)
     if title is not None:
         task["title"] = title
     if due is not None:
