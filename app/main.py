@@ -2,7 +2,8 @@ from typing import Annotated, Any, Callable, Optional, TypedDict
 from datetime import datetime
 import operator
 
-from fastapi import Body, Depends, FastAPI, HTTPException, Query
+from fastapi import Body, Depends, FastAPI, Header, HTTPException, Query, Security
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 class Task(TypedDict):
     id: int
@@ -59,6 +60,8 @@ operator_map = {
     '': operator.eq
 }
 
+ADMIN_PASSWORD = "adminpassword"
+security = HTTPBearer()
 
 id_incr = max(tasks.keys())
 
@@ -109,6 +112,10 @@ def parse_filter_params(
 
     return filters
 
+def check_authorization(credentials: HTTPAuthorizationCredentials = Security(security)):
+    if credentials.credentials != ADMIN_PASSWORD:
+        raise HTTPException(status_code=401)
+    return True
 
 app = FastAPI()
 
@@ -168,7 +175,7 @@ def update_task(
     if completed is not None:
         task["completed"] = completed
 
-@app.delete("/tasks")
+@app.delete("/tasks", dependencies=[Security(check_authorization)])
 def delete_tasks(
     filters: list[tuple[str, Callable[[Any, Any], bool], Any]] = Depends(parse_filter_params)
 ):
