@@ -10,5 +10,6 @@ services:
       - --reload
     volumes:
       - ./app:/code/app
+      - ./tests:/code/tests
     ports:
       - "8000:80"
