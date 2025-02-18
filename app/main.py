@@ -143,7 +143,7 @@ def get_task(id: int):
         raise HTTPException(status_code=400)
     return tasks[id]
 
-@app.post("/tasks")
+@app.post("/tasks", status_code=201)
 def create_task(
     title: Annotated[str, Body()],
     due: Annotated[date, Body()],

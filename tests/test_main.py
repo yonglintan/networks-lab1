@@ -63,7 +63,7 @@ def test_post(client):
         "due" : date.today().isoformat()
     }
     r1 = client.post("/tasks", json=new_task)
-    assert r1.status_code == 200
+    assert r1.status_code == 201
 
     r2 = client.get("/tasks")
     assert r2.status_code == 200
