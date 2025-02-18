@@ -146,14 +146,15 @@ def get_task(id: int):
 @app.post("/tasks")
 def create_task(
     title: Annotated[str, Body()],
-    due: Annotated[date, Body()]
+    due: Annotated[date, Body()],
+    completed: Annotated[bool, Body()] = False
 ):
     global tasks
     id = get_unique_id()
     tasks[id] = {
         "id": id,
         "title": title,
-        "completed": False,
+        "completed": completed,
         "due": due
     }
 
