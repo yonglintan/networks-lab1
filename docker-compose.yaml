@@ -8,6 +8,8 @@ services:
       - --port
       - "80"
       - --reload
+    environment:
+      BASE_URL: "http://localhost:80"
     volumes:
       - ./app:/code/app
       - ./tests:/code/tests
