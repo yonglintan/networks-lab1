@@ -161,9 +161,9 @@ def create_task(
 @app.put("/tasks/{id}")
 def update_task(
     id: int,
-    title: Annotated[Optional[str] , Body()] = None,
-    due: Annotated[Optional[date], Body()] = None,
-    completed: Annotated[Optional[bool], Body()] = None,
+    title: Annotated[str , Body()],
+    due: Annotated[date, Body()],
+    completed: Annotated[bool, Body()],
 ):
     global tasks
     task = tasks.get(id)
