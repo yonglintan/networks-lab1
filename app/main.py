@@ -1,5 +1,5 @@
 from typing import Annotated, Any, Callable, Optional, TypedDict
-from datetime import datetime
+from datetime import date
 import operator
 
 from fastapi import Body, Depends, FastAPI, Header, HTTPException, Query, Security
@@ -9,44 +9,44 @@ class Task(TypedDict):
     id: int
     title: str
     completed: bool
-    due: datetime
+    due: date
 
 tasks : dict[int, Task] = {
-    0: {
-        "id": 0,
+    2: {
+        "id": 2,
         "title": "buy milk",
         "completed": True,
-        "due": datetime(2024, 5, 17).astimezone() 
+        "due": date(2024, 5, 17)
     },
     1: {
         "id": 1,
         "title": "buy eggs",
         "completed": True,
-        "due": datetime(2024, 5, 18).astimezone()
+        "due": date(2024, 5, 18)
     },
-    2: {
-        "id": 2,
+    0: {
+        "id": 0,
         "title": "top up gas",
         "completed": False,
-        "due": datetime(2024, 5, 16).astimezone()
+        "due": date(2024, 5, 16)
     },
     3: {
         "id": 3,
         "title": "complete math homework",
         "completed": False,
-        "due": datetime(2024, 5, 13).astimezone()
+        "due": date(2024, 5, 13)
     },
     4: {
         "id": 4,
         "title": "make bed",
         "completed": True,
-        "due": datetime(2024, 7, 1).astimezone()
+        "due": date(2024, 7, 1)
     },
     5: {
         "id": 5,
         "title": "pick up kids",
         "completed": False,
-        "due": datetime(2024, 2, 27).astimezone()
+        "due": date(2024, 2, 27)
     },
 }
 
@@ -103,7 +103,7 @@ def parse_filter_params(
             if op_func is None:
                 raise HTTPException(status_code=400, detail=f"Invalid operator in due date filter: {filt}")
             try:
-                value = datetime.strptime(filt[digits_i:], "%Y-%m-%d").astimezone()
+                value = date.fromisoformat(filt[digits_i:])
                 filters.append(("due", op_func, value))
             except:
                 raise HTTPException(status_code=400, detail=f"Invalid value for due date filter: {filt}")
@@ -146,7 +146,7 @@ def get_task(id: int):
 @app.post("/tasks")
 def create_task(
     title: Annotated[str, Body()],
-    due: Annotated[datetime, Body()]
+    due: Annotated[date, Body()]
 ):
     global tasks
     id = get_unique_id()
@@ -161,7 +161,7 @@ def create_task(
 def update_task(
     id: int,
     title: Annotated[Optional[str] , Body()] = None,
-    due: Annotated[Optional[datetime], Body()] = None,
+    due: Annotated[Optional[date], Body()] = None,
     completed: Annotated[Optional[bool], Body()] = None,
 ):
     global tasks
